@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahmad Sazid| Photo ⇄ PDF Converter</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap');
+
+*{box-sizing:border-box;transition:all .3s ease;}
+body{
+  background:radial-gradient(circle at top left,#001330,#000a1a,#001330);
+  color:#eaf6ff;
+  font-family:'Poppins',sans-serif;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:20px;overflow-x:hidden;
+}
+
+h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:2.3em;
+  background:linear-gradient(90deg,#00ccff,#66ffcc,#00ffff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 25px rgba(0,255,255,.4);
+  animation:titleGlow 3s infinite faiyazkamalh4ck@gmail.comalternate;
+  text-align:center;
+}
+@keyframes titleGlow{from{text-shadow:0 0 15px #00ccff;}to{text-shadow:0 0 40px #00ffff;}}
+
+.container{
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(0,255,255,0.25);
+  border-radius:25px;
+  padding:30px;
+  width:440px;max-width:95%;
+  text-align:center;
+  backdrop-filter:blur(15px);
+  box-shadow:0 0 30px rgba(0,255,255,0.15);
+  position:relative;
+}
+
+.tabs{
+  display:flex;justify-content:space-between;margin-bottom:20px;
+  border-bottom:2px solid rgba(0,255,255,0.3);
+}
+.tab{
+  flex:1;text-align:center;padding:10px 0;cursor:pointer;
+  font-weight:600;color:#9ee;border-radius:10px 10px 0 0;
+}
+.tab.active{
+  background:linear-gradient(90deg,#00ffff,#00ccff);
+  color:#001033;
+  font-weight:700;
+  box-shadow:0 0 15px rgba(0,255,255,.4);
+}
+
+.section{display:none;}
+.section.active{display:block;}
+
+.upload-box{
+  border:2px dashed rgba(0,255,255,0.5);
+  border-radius:15px;padding:40px 20px;margin-bottom:20px;
+  background:rgba(255,255,255,0.05);
+  cursor:pointer;
+}
+.upload-box:hover{border-color:#00ffff;background:rgba(0,255,255,0.1);}
+.file-name{
+  margin-top:10px;font-size:0.95em;
+  color:#b8eaff;
+  font-weight:500;
+}
+
+select{
+  background:rgba(0,255,255,0.1);
+  border:1px solid rgba(0,255,255,0.4);
+  color:#fff;
+  border-radius:10px;
+  padding:8px 12px;
+  margin-bottom:15px;
+  font-size:0.95em;
+  outline:none;
+}
+select:hover{background:rgba(0,255,255,0.2);}
+
+button{
+  background:linear-gradient(90deg,#00ffff,#00ccff);
+  border:none;border-radius:10px;
+  padding:12px 25px;font-size:1em;
+  font-weight:700;color:#002;
+  cursor:pointer;
+  box-shadow:0 0 25px rgba(0,255,255,0.3);
+  margin:5px;
+}
+button:hover{
+  transform:translateY(-3px);
+  box-shadow:0 0 40px rgba(0,255,255,0.6);
+}
+
+/* Preview styling */
+#previewPDF,#previewIMG{
+  max-height:300px;
+  overflow:auto;
+  border:1px solid rgba(0,255,255,0.3);
+  border-radius:10px;
+  padding:5px;
+  margin-top:10px;
+}
+#previewPDF img,#previewIMG embed{
+  max-width:100%;
+  display:block;
+  cursor:zoom-in;
+  transition:transform 0.3s ease;
+}
+#previewPDF img.zoomed,#previewIMG embed.zoomed{
+  transform:scale(2);
+  cursor:zoom-out;
+}
+
+a.download-link{
+  display:inline-block;margin-top:10px;
+  color:#00ffff;text-decoration:none;font-weight:600;
+}
+a.download-link:hover{text-shadow:0 0 10px #00ffff;}
+
+footer{
+  margin-top:25px;font-size:.9em;text-align:center;color:#8ee;
+}
+footer a{color:#00ffff;text-decoration:none;}
+footer a:hover{text-shadow:0 0 10px #00ffff;}
+
+@media (max-width:600px){
+  h1{font-size:1.8em;}
+  .container{width:95%;padding:20px;}
+  .upload-box{padding:30px 10px;}
+  button{padding:10px 18px;font-size:.9em;}
+}
+</style>
+</head>
+<body>
+
+<h1>⚡ Photo ⇄ PDF Converter</h1>
+
+<div class="container">
+  <div class="tabs">
+    <div class="tab active" id="pdfToImgTab">📄 PDF ➜ Image</div>
+    <div class="tab" id="imgToPdfTab">🖼️ Image ➜ PDF</div>
+  </div>
+
+  <!-- PDF to Image -->
+  <div class="section active" id="pdfToImgSection">
+    <div id="dropZonePDF" class="upload-box">
+      <p>📂 Drag & Drop PDF or Click to Select</p>
+      <input type="file" id="pdfFile" accept="application/pdf" hidden>
+      <div class="file-name" id="pdfFileName"></div>
+    </div>
+
+    <label for="pdfQuality">🧩 Select Image Quality:</label><br>
+    <select id="pdfQuality">
+      <option value="400">Low (400 PPI)</option>
+      <option value="700">Medium (700 PPI)</option>
+      <option value="1000" selected>High (1000 PPI)</option>
+      <option value="1500">Ultra (1500 PPI)</option>
+    </select><br>
+
+    <button id="convertPDF">⚡ Convert</button>
+    <button id="previewPDFBtn">👁️ Preview</button>
+    <div id="previewPDF"></div>
+  </div>
+
+  <!-- Image to PDF -->
+  <div class="section" id="imgToPdfSection">
+    <div id="dropZoneIMG" class="upload-box">
+      <p>🖼️ Drag & Drop Image or Click to Select</p>
+      <input type="file" id="imgFile" accept="image/*" hidden>
+      <div class="file-name" id="imgFileName"></div>
+    </div>
+
+    <label for="imgQuality">🧩 Select PDF Quality:</label><br>
+    <select id="imgQuality">
+      <option value="400">Low (400 PPI)</option>
+      <option value="700">Medium (700 PPI)</option>
+      <option value="1000" selected>High (1000 PPI)</option>
+      <option value="1500">Ultra (1500 PPI)</option>
+    </select><br>
+
+    <button id="convertIMG">⚡ Convert</button>
+    <button id="previewIMGBtn">👁️ Preview</button>
+    <div id="previewIMG"></div>
+  </div>
+</div>
+
+<footer>
+  Made with 💙 by <b>Ahmad Sazid</b><br>
+  📧 <a href="mailto:">sazidahmad2nd@gmail.com</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+// Tabs
+const pdfTab=document.getElementById('pdfToImgTab');
+const imgTab=document.getElementById('imgToPdfTab');
+const pdfSec=document.getElementById('pdfToImgSection');
+const imgSec=document.getElementById('imgToPdfSection');
+pdfTab.onclick=()=>switchTab('pdf');
+imgTab.onclick=()=>switchTab('img');
+function switchTab(type){
+  if(type==='pdf'){
+    pdfTab.classList.add('active');imgTab.classList.remove('active');
+    pdfSec.classList.add('active');imgSec.classList.remove('active');
+  }else{
+    imgTab.classList.add('active');pdfTab.classList.remove('active');
+    imgSec.classList.add('active');pdfSec.classList.remove('active');
+  }
+}
+
+// File name display
+function showFileName(input,display){
+  if(input.files.length){display.textContent=`✅ Selected: ${input.files[0].name}`;}
+  else{display.textContent='';}
+}
+
+// PDF → Image
+const pdfInput=document.getElementById('pdfFile');
+const dropPDF=document.getElementById('dropZonePDF');
+const pdfFileName=document.getElementById('pdfFileName');
+const previewPDF=document.getElementById('previewPDF');
+let pdfDataURL='';
+
+dropPDF.addEventListener('click',()=>pdfInput.click());
+dropPDF.addEventListener('drop',e=>{
+  e.preventDefault(); pdfInput.files=e.dataTransfer.files; showFileName(pdfInput,pdfFileName);
+});
+dropPDF.addEventListener('dragover',e=>e.preventDefault());
+pdfInput.addEventListener('change',()=>showFileName(pdfInput,pdfFileName));
+
+document.getElementById('convertPDF').onclick=async()=>{
+  if(!pdfInput.files.length)return alert('Please select a PDF!');
+  const file=pdfInput.files[0];
+  const ppi=parseInt(document.getElementById('pdfQuality').value);
+  const reader=new FileReader();
+  reader.onload=async function(){
+    const typedArray=new Uint8Array(this.result);
+    const pdf=await pdfjsLib.getDocument(typedArray).promise;
+    const page=await pdf.getPage(1);
+    const scale=ppi/72;
+    const viewport=page.getViewport({scale});
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
+    canvas.width=viewport.width;canvas.height=viewport.height;
+    await page.render({canvasContext:ctx,viewport}).promise;
+    pdfDataURL=canvas.toDataURL('image/png');
+    alert('✅ Converted! Click Preview to view.');
+  };
+  reader.readAsArrayBuffer(file);
+};
+
+document.getElementById('previewPDFBtn').onclick=()=>{
+  if(!pdfDataURL) return alert('Please convert first!');
+  previewPDF.innerHTML=`<img src="${pdfDataURL}"><br>
+    <a class="download-link" href="${pdfDataURL}" download="converted.png">⬇ Download Image</a>`;
+};
+
+// Image → PDF
+const imgInput=document.getElementById('imgFile');
+const dropIMG=document.getElementById('dropZoneIMG');
+const imgFileName=document.getElementById('imgFileName');
+const previewIMG=document.getElementById('previewIMG');
+let imgPDFBlob='';
+
+dropIMG.addEventListener('click',()=>imgInput.click());
+dropIMG.addEventListener('drop',e=>{
+  e.preventDefault(); imgInput.files=e.dataTransfer.files; showFileName(imgInput,imgFileName);
+});
+dropIMG.addEventListener('dragover',e=>e.preventDefault());
+imgInput.addEventListener('change',()=>showFileName(imgInput,imgFileName));
+
+document.getElementById('convertIMG').onclick=()=>{
+  if(!imgInput.files.length)return alert('Please select an image!');
+  const file=imgInput.files[0];
+  const ppi=parseInt(document.getElementById('imgQuality').value);
+  const img=new Image();
+  img.src=URL.createObjectURL(file);
+  img.onload=()=>{
+    const {jsPDF}=window.jspdf;
+    const width=img.width*(ppi/72);
+    const height=img.height*(ppi/72);
+    const pdf=new jsPDF({orientation:'portrait',unit:'px',format:[width,height]});
+    pdf.addImage(img,'PNG',0,0,width,height);
+    imgPDFBlob=pdf.output('bloburl');
+    alert('✅ Converted! Click Preview to view.');
+  };
+};
+
+document.getElementById('previewIMGBtn').onclick=()=>{
+  if(!imgPDFBlob) return alert('Please convert first!');
+  previewIMG.innerHTML=`<embed src="${imgPDFBlob}" width="100%" height="300px"><br>
+    <a class="download-link" href="${imgPDFBlob}" download="converted.pdf">⬇ Download PDF</a>`;
+};
+
+// Zoom functionality
+function enableZoom(previewSelector){
+  const container=document.querySelector(previewSelector);
+  container.addEventListener('click',e=>{
+    const target=e.target;
+    if(target.tagName==='IMG' || target.tagName==='EMBED'){
+      target.classList.toggle('zoomed');
+    }
+  });
+}
+enableZoom('#previewPDF');
+enableZoom('#previewIMG');
+</script>
+</body>
+</html>
